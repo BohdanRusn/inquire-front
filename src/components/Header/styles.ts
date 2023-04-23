@@ -30,12 +30,9 @@ export const useStyles = makeStyles((theme: Theme) => ({
     },
 
     buttons: {
+        display: "flex",
         "& button": {
             marginLeft: 10,
-        },
-
-        "& a": {
-            textDecoration: "none",
         },
     },
 }))

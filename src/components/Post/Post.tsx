@@ -17,27 +17,32 @@ import { removePost } from "../../redux/slices/posts/posts";
 import { closeModal, openModal } from "../../redux/slices/modal";
 import { ModalType } from "../../redux/types/modal";
 import { UserInfo } from "../UserInfo/UserInfo";
+import { IAuthData } from "../interfaces/auth/IAuth";
 
 interface PostProps {
   title: string;
   children?: JSX.Element;
   id: number;
+  user: IAuthData;
   commentsCount: number;
   isFullPost?: boolean;
   isLoading?: boolean;
+  isEditable?: boolean;
 }
 
 export const Post = ({
   id,
   title,
   children,
+  user,
   isFullPost,
+  isEditable,
   commentsCount,
   isLoading,
 }: PostProps) => {
   const navigate = useNavigate();
   const styles = useStyles();
-  if (isLoading) {
+  if ( isLoading ) {
     return <PostSkeleton/>;
   }
   const onClickRemove = () => {
@@ -56,20 +61,22 @@ export const Post = ({
 
 
   return (
-    <Box className={ styles.editableRoot }>
+    <Box className={ isEditable ? styles.editableRoot : styles.root }>
+      { isEditable && (
         <Box className={ styles.editButtons }>
-          <Link to={ `/posts/${ id }/edit` }>
-            <IconButton color="warning">
-              <EditIcon/>
-            </IconButton>
-          </Link>
-          <IconButton onClick={ onClickRemove } color="error">
-            <DeleteIcon/>
+        <Link to={ `/posts/${ id }/edit` }>
+          <IconButton color="warning">
+            <EditIcon/>
           </IconButton>
-        </Box>
+        </Link>
+        <IconButton onClick={ onClickRemove } color="error">
+          <DeleteIcon/>
+        </IconButton>
+      </Box>
+      ) }
       <Box className={ styles.wrapper }>
         <Box className={ styles.details }>
-          <UserInfo />
+          <UserInfo user={ user }/>
           <ul className={ styles.postDetails }>
             <li>
               <CommentIcon/>

@@ -31,20 +31,25 @@ import { ModalType } from "../../redux/types/modal";
 import { removeComment } from "../../redux/slices/posts/posts";
 import { isPostLoading } from "../../redux/slices/posts/postsSelectors";
 import { avatarUrl, fullName } from "../UserInfo/UserInfo";
+import { IAuthData } from "../interfaces/auth/IAuth";
+import { selectUser } from "../../redux/slices/auth/authSelectors";
 
 interface ICommentsBlock {
   items: Comment[] | [];
   children: React.ReactNode;
   isLoading: boolean;
+  postOwner: IAuthData;
 }
 
 export const CommentsBlock = ({
   items,
+  postOwner,
   children,
   isLoading = true,
 }: ICommentsBlock) => {
   const styles = useStyles();
   const loadingState = useSelector(isPostLoading);
+  const userData = useSelector(selectUser) as IAuthData;
   const [ open, setOpen ] = React.useState(false);
 
   const onClickRemove = (id: number) => {
@@ -127,10 +132,11 @@ export const CommentsBlock = ({
                               } }
                             >
                               <ListItemText
-                                primary={ fullName }
+                                primary={ obj?.author?.name }
                                 secondary={ obj.content }
                               />
-                              <Tooltip title="Видалити коментар">
+                              { (( userData && userData?.id) === obj.author?.id ||
+                              ( userData && userData?.id) === postOwner?.id) && (<Tooltip title="Видалити коментар">
                                 <IconButton
                                   aria-label="close"
                                   onClick={ () => onClickRemove(obj.id) }
@@ -138,7 +144,7 @@ export const CommentsBlock = ({
                                 >
                                   <DeleteIcon className={ styles.closeIcon }/>
                                 </IconButton>
-                              </Tooltip>
+                              </Tooltip>) }
                             </Box>
                           ) }
                         </ListItem>

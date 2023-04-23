@@ -7,13 +7,17 @@ import { PostSkeleton } from "../../components/Post/Skeleton/Skeleton";
 import blog from "../../assets/img/blog.png";
 import { NoPost } from "./components/NoPost/NoPost";
 import { Post } from "../../components/Post/Post";
+import { IAuthData } from "../../components/interfaces/auth/IAuth";
 
 export const MainPage = () => {
   const postsList = useSelector(selectPostsList);
   const isLoading = useSelector(selectIsPostsListLoading);
+  const user = JSON.parse(window.localStorage.getItem("user") as string);
+
   React.useEffect(() => {
     appDispatch(getAllPosts())
   }, [])
+
   return (
     <div>
       { isLoading ? [ ...Array(3) ].map((post, index) => <PostSkeleton key={ index }/>)
@@ -24,6 +28,8 @@ export const MainPage = () => {
             <Post
               key={ post.id }
               id={ post.id }
+              user={ post.author }
+              isEditable={ post.author.id === (user as IAuthData)?.id }
               title={ post.title }
               isLoading={ isLoading }
               commentsCount={ post.comments.length }

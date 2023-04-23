@@ -6,8 +6,11 @@ import { ToastStateProps } from "./types/toast";
 import thunk from 'redux-thunk'
 import { PostState } from "./types/post";
 import { postsReducer } from "./slices/posts/posts";
+import { AuthStateProps } from "../components/interfaces/auth/IAuth";
+import { authReducer } from "./slices/auth/auth";
 
 export interface IStore{
+  auth: AuthStateProps,
   toast: ToastStateProps,
   modal: ModalParamsState,
   posts: PostState
@@ -15,6 +18,7 @@ export interface IStore{
 
 const store = configureStore<IStore>({
   reducer: {
+    auth: authReducer,
     toast: toastReducer,
     modal: modalReducer,
     posts: postsReducer,

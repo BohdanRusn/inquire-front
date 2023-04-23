@@ -170,7 +170,8 @@ const postsSlice = createSlice<
         ...state.post.data,
         comments: [...(state.post.data as Post).comments, {
           id: action.payload.id,
-          content: action.payload.content
+          content: action.payload.content,
+          author: action.payload.author
         }]
       }
     },
