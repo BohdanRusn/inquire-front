@@ -1,6 +1,6 @@
 import React from "react";
 import { appDispatch } from "../../redux/store";
-import { getAllPosts } from "../../redux/slices/posts/posts";
+import { apiPosts, getAllPosts, getPosts } from "../../redux/slices/posts/posts";
 import { useSelector } from "react-redux";
 import { selectIsPostsListLoading, selectPostsList } from "../../redux/slices/posts/postsSelectors";
 import { PostSkeleton } from "../../components/Post/Skeleton/Skeleton";

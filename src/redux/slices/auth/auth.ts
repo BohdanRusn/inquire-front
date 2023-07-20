@@ -1,6 +1,42 @@
 import { createAsyncThunk, createSlice, SliceCaseReducers, } from "@reduxjs/toolkit";
 import axiosInstance from "../../../configure/axios";
-import { AuthStateProps, IUserLoginData, IUserRegisterData, } from "../../../components/interfaces/auth/IAuth";
+import {
+    AuthStateProps,
+    IAuthResponse,
+    IUserLoginData,
+    IUserRegisterData,
+} from "../../../components/interfaces/auth/IAuth";
+import { gql } from "@apollo/client";
+import { createApi } from "@reduxjs/toolkit/query";
+import { graphqlRequestBaseQuery } from "@rtk-query/graphql-request-base-query";
+
+export const api = createApi({
+    baseQuery: graphqlRequestBaseQuery({
+        url: '/graphql',
+    }),
+    endpoints: (builder) => ({
+        getPosts: builder.query<
+            IAuthResponse,
+            { user: IUserLoginData; }
+        >({
+            query: ({ user }) => ({
+                document: gql`
+                    mutation login($user: LoginUser!){
+                        login(user: $user){
+                            id
+                            name
+                            email
+                            token
+                        }
+                    }
+                `,
+                variables: {
+                    user,
+                },
+            }),
+        }),
+    }),
+})
 
 export const fetchAuth = createAsyncThunk("auth/fetchAuth", async (values: IUserLoginData, { dispatch }) => {
   try {

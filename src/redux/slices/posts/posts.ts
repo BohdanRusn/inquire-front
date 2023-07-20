@@ -6,6 +6,42 @@ import axiosInstance from "../../../configure/axios";
 import { PostState } from "../../types/post";
 import { ToastType } from "../../types/toast";
 import { openToast } from "../toast";
+import { createApi } from "@reduxjs/toolkit/query";
+import { graphqlRequestBaseQuery } from "@rtk-query/graphql-request-base-query";
+
+export const GetPostsDocument = `
+    query {
+  posts {
+    id
+    title
+    content
+    comments {
+      id
+      content
+      author {
+        id
+        name
+      }
+    }
+    author {
+      id
+      name
+    }
+  }
+}
+    `;
+
+export const apiPosts = createApi({
+  reducerPath: 'api',
+  baseQuery: graphqlRequestBaseQuery({
+    url: 'http://localhost:5000/graphql',
+  }),
+  endpoints: (builder) => ({
+    getPosts: builder.query<Post[], void>({
+      query: () => ({document: GetPostsDocument})
+    })
+  })
+});
 
 
 export const getAllPosts = createAsyncThunk(
@@ -179,5 +215,9 @@ const postsSlice = createSlice<
 })
 
 export const postsReducer = postsSlice.reducer;
+
+export const {
+  endpoints: { getPosts },
+} = apiPosts
 
 export const { clearPost } = postsSlice.actions

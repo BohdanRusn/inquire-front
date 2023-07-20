@@ -6,9 +6,8 @@ export interface IAuthData {
   email: string;
   lastLoginAt: string;
 }
-export interface IAuthResponse {
-  user: IAuthData,
-  token: string,
+export interface IAuthResponse extends IAuthData{
+  token: string;
 }
 
 export interface AuthStateProps {
