@@ -15,9 +15,9 @@ function App() {
   const [ successToast, errorToast ] = useToast();
   const toast = useSelector(selectToastState);
   const isLoaded = useSelector(isAuth);
-  React.useEffect(() => {
-    appDispatch(fetchAuthMe());
-  }, []);
+  // React.useEffect(() => {
+  //   appDispatch(fetchAuthMe());
+  // }, []);
 
   React.useEffect(() => {
     if ( toast.message ) {

@@ -1,16 +1,16 @@
 import { createAsyncThunk, createSlice, Draft, SliceCaseReducers } from "@reduxjs/toolkit";
-import { Post, PostInfo, UpdatePost } from "../../../components/interfaces/IPost";
 import axiosInstance from "../../../configure/axios";
 
 
 import { PostState } from "../../types/post";
 import { ToastType } from "../../types/toast";
 import { openToast } from "../toast";
-import { createApi } from "@reduxjs/toolkit/query";
-import { graphqlRequestBaseQuery } from "@rtk-query/graphql-request-base-query";
+import api from "../../../store/rtk.config";
+import { Comment, Post, PostInfo, UpdatePost } from "../../../components/interfaces/IPost";
+import { gql } from "@apollo/client";
 
-export const GetPostsDocument = `
-    query {
+export const GetPostsDocument = gql`
+query {
   posts {
     id
     title
@@ -31,17 +31,17 @@ export const GetPostsDocument = `
 }
     `;
 
-export const apiPosts = createApi({
-  reducerPath: 'api',
-  baseQuery: graphqlRequestBaseQuery({
-    url: 'http://localhost:5000/graphql',
-  }),
-  endpoints: (builder) => ({
-    getPosts: builder.query<Post[], void>({
-      query: () => ({document: GetPostsDocument})
+export const apiPosts = api.injectEndpoints({
+  endpoints: (build) => ({
+    getAllPosts: build.mutation({
+      query: () => ({
+        url: "/graphql",
+        body: GetPostsDocument,
+        method: "POST"
+      })
     })
   })
-});
+})
 
 
 export const getAllPosts = createAsyncThunk(
@@ -198,7 +198,7 @@ const postsSlice = createSlice<
     [removeComment.fulfilled.type]: (state, action) => {
       state.post.data = {
         ...state.post.data,
-        comments: (state.post.data as Post).comments.filter(el => el.id !== action.payload)
+        comments: (state.post.data as Post).comments.filter((el: Comment) => el.id !== action.payload)
       }
     },
     [addComment.fulfilled.type]: (state, action) => {
@@ -215,9 +215,5 @@ const postsSlice = createSlice<
 })
 
 export const postsReducer = postsSlice.reducer;
-
-export const {
-  endpoints: { getPosts },
-} = apiPosts
 
 export const { clearPost } = postsSlice.actions

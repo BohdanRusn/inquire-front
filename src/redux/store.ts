@@ -1,4 +1,4 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { toastReducer } from "./slices/toast";
 import { ModalParamsState } from "./types/modal";
 import { modalReducer } from "./slices/modal";
@@ -18,13 +18,13 @@ export interface IStore{
 }
 
 const store = configureStore<IStore, any>({
-  reducer: {
+  reducer: combineReducers({
     auth: authReducer,
     toast: toastReducer,
     modal: modalReducer,
     posts: postsReducer,
     [apiPosts.reducerPath]: apiPosts.reducer
-  },
+  }),
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(apiPosts.middleware) as any
 });

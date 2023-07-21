@@ -8,6 +8,7 @@ const axiosInstance = axios.create({
   baseURL: `${ baseUrl }/`,
 });
 
+
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
