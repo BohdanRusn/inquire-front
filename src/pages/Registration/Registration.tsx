@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 
@@ -19,7 +19,7 @@ import { useToast } from "../../hooks/toast/useToast";
 export const Registration = () => {
   const styles = useStyles();
   const isAuth = useSelector(selectIsAuth);
-  const [ successToast, errorToast ] = useToast();
+  const { successToast, errorToast }  = useToast();
   const user = JSON.parse(window.localStorage.getItem("user") as string);
   const navigate = useNavigate();
 

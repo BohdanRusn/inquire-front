@@ -10,10 +10,12 @@ import { CreatePost } from "./components/CreatePost/CreatePost";
 import { appDispatch } from "../../redux/store";
 import { logout } from "../../redux/slices/auth/auth";
 import Tooltip from "@mui/material/Tooltip";
+import { useSelector } from "react-redux";
+import { isAuth, selectUser } from "../../redux/slices/auth/authSelectors";
 
 export const Header = () => {
   const styles = useStyles();
-  const user = JSON.parse(window.localStorage.getItem("user") as string);
+  const user = useSelector(isAuth);
   const navigate = useNavigate();
 
   const logoutProfile = () => {
@@ -32,7 +34,7 @@ export const Header = () => {
           </Link>
           <Box className={ styles.buttons }>
 
-            { !!user ? (
+            { user ? (
               <>
                 <Box style={ { display: "flex", alignItems: "center" } }>
                   <CreatePost/>

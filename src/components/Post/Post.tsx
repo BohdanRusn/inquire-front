@@ -13,7 +13,6 @@ import { Box } from "@mui/material";
 import 'react-toastify/dist/ReactToastify.css';
 import { useStyles } from "./style";
 import { appDispatch } from "../../redux/store";
-import { removePost } from "../../redux/slices/posts/posts";
 import { closeModal, openModal } from "../../redux/slices/modal";
 import { ModalType } from "../../redux/types/modal";
 import { UserInfo } from "../UserInfo/UserInfo";
@@ -52,7 +51,7 @@ export const Post = ({
         appDispatch(closeModal(ModalType.RemovePost));
       },
       onSubmit: () => {
-        appDispatch(removePost(id));
+        // appDispatch(removePost(id));
         appDispatch(closeModal(ModalType.RemovePost));
       },
     }))

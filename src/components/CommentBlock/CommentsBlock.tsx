@@ -28,8 +28,8 @@ import { useStyles } from "./styles";
 import { appDispatch } from "../../redux/store";
 import { closeModal, openModal } from "../../redux/slices/modal";
 import { ModalType } from "../../redux/types/modal";
-import { removeComment } from "../../redux/slices/posts/posts";
-import { isPostLoading } from "../../redux/slices/posts/postsSelectors";
+// import { removeComment } from "../../redux/slices/posts/posts";
+// import { isPostLoading } from "../../redux/slices/posts/postsSelectors";
 import { avatarUrl, fullName } from "../UserInfo/UserInfo";
 import { IAuthData } from "../interfaces/auth/IAuth";
 import { selectUser } from "../../redux/slices/auth/authSelectors";
@@ -48,7 +48,7 @@ export const CommentsBlock = ({
   isLoading = true,
 }: ICommentsBlock) => {
   const styles = useStyles();
-  const loadingState = useSelector(isPostLoading);
+  // const loadingState = useSelector(isPostLoading);
   const userData = useSelector(selectUser) as IAuthData;
   const [ open, setOpen ] = React.useState(false);
 
@@ -59,7 +59,7 @@ export const CommentsBlock = ({
         appDispatch(closeModal(ModalType.RemoveComment));
       },
       onSubmit: () => {
-        appDispatch(removeComment(id));
+        // appDispatch(removeComment(id));
         appDispatch(closeModal(ModalType.RemoveComment));
       },
     }))
@@ -72,11 +72,11 @@ export const CommentsBlock = ({
           <>
             <Typography component="span">Коментарі</Typography>&nbsp;
             <Typography component="span">
-              { loadingState ? (
-                <CircularProgress style={ { width: 20, height: 20 } }/>
-              ) : (
-                items?.length
-              ) }
+              {/*{ loadingState ? (*/}
+              {/*  <CircularProgress style={ { width: 20, height: 20 } }/>*/}
+              {/*) : (*/}
+              {/*  items?.length*/}
+              {/*) }*/}
             </Typography>
           </>
         }

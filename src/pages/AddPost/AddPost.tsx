@@ -1,6 +1,5 @@
 import React from "react";
-import { useNavigate, useParams, useLocation  } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import SimpleMDE from "react-simplemde-editor";
 import { Options } from "easymde";
@@ -12,52 +11,54 @@ import "easymde/dist/easymde.min.css";
 
 import { useStyles } from "./styles";
 import { appDispatch } from "../../redux/store";
-import { addPost, clearPost, getPostById, updatePost } from "../../redux/slices/posts/posts";
-import { selectPostById } from "../../redux/slices/posts/postsSelectors";
-import { Post } from "../../components/interfaces/IPost";
 import { Box } from "@mui/material";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { AddNewPost, GetPostById, UpdatePost } from "../../app/graphql/queries/queries";
 
 export const AddPost = () => {
   const styles = useStyles();
   const location = useLocation();
-  const currentPost = useSelector(selectPostById) as Post;
-  const [title, setTitle] = React.useState("");
-  const [content, setContent] = React.useState("");
+  const [ title, setTitle ] = React.useState( "" );
+  const [ content, setContent ] = React.useState( "" );
   const navigate = useNavigate();
   const { id } = useParams();
-  const isEditing = Boolean(id);
-
-
+  const [ addNewPost, { loading: addLoading } ] = useMutation( AddNewPost );
+  const [ updatePost, { loading: updateLoading } ] = useMutation( UpdatePost );
+  const [getPostById, { loading, data: currentPost }] = useLazyQuery( GetPostById );
+  
+  const isEditing = Boolean( id );
+  
+  
   const onSubmit = async () => {
-      const fields = {
-        title,
-        content,
-      };
-      const data = isEditing
-        ? await appDispatch(updatePost({id: Number(id), updateData: fields}))
-        : await appDispatch(addPost(fields));
-      const _id = data.payload.id;
-
-      navigate(`/posts/${_id}`);
+    const fields = {
+      title,
+      content,
+    };
+    const data = isEditing
+      ? await updatePost( { variables: { post: { id: Number(id), newPost: fields } } }  )
+      : await addNewPost( { variables: { newPost: fields } }  );
+    console.log( data );
+    // const _id = data.payload.id;
+    //
+    // navigate(`/posts/${_id}`);
   };
 
   React.useEffect(() => {
     if (id) {
-      appDispatch(getPostById(+id))
+      getPostById({ variables: { postId: Number( id ) } })
     }
     return () => {
       setTitle("");
       setContent("");
-      appDispatch(clearPost(null));
     }
   }, [location]);
 
-  React.useEffect(()=>{
-    if ( currentPost ){
-      setTitle(currentPost.title);
-      setContent(currentPost.content);
+  React.useEffect( () => {
+    if ( currentPost?.post ) {
+      setTitle( currentPost?.post.title );
+      setContent( currentPost?.post.content );
     }
-  }, [currentPost])
+  }, [ currentPost ] )
 
   const onChange = React.useCallback((value: React.SetStateAction<string>) => {
     setContent(value);

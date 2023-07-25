@@ -1,10 +1,10 @@
 import { toast } from "react-toastify";
 
-export const useToast = (): [
-  (text: string, onClose?: () => void) => void,
-  (text: string, onClose?: () => void) => void,
-  (text: string) => void
-] => {
+export const useToast = (): {
+  successToast: ( text: string, onClose?: () => void ) => void,
+  errorToast: ( text: string, onClose?: () => void ) => void,
+  infoToast: ( text: string ) => void
+} => {
   const errorToast = (text: string, onClose?: () => void) =>
     toast.error(text, {
       position: "top-center",
@@ -40,5 +40,5 @@ export const useToast = (): [
       progress: undefined,
     });
 
-  return [successToast, errorToast, infoToast];
+  return { successToast, errorToast, infoToast };
 };

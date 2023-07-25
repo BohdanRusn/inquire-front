@@ -2,41 +2,10 @@ import { createAsyncThunk, createSlice, SliceCaseReducers, } from "@reduxjs/tool
 import axiosInstance from "../../../configure/axios";
 import {
     AuthStateProps,
-    IAuthResponse,
     IUserLoginData,
     IUserRegisterData,
 } from "../../../components/interfaces/auth/IAuth";
-import { gql } from "@apollo/client";
-import { createApi } from "@reduxjs/toolkit/query";
-import { graphqlRequestBaseQuery } from "@rtk-query/graphql-request-base-query";
 
-export const api = createApi({
-    baseQuery: graphqlRequestBaseQuery({
-        url: '/graphql',
-    }),
-    endpoints: (builder) => ({
-        getPosts: builder.query<
-            IAuthResponse,
-            { user: IUserLoginData; }
-        >({
-            query: ({ user }) => ({
-                document: gql`
-                    mutation login($user: LoginUser!){
-                        login(user: $user){
-                            id
-                            name
-                            email
-                            token
-                        }
-                    }
-                `,
-                variables: {
-                    user,
-                },
-            }),
-        }),
-    }),
-})
 
 export const fetchAuth = createAsyncThunk("auth/fetchAuth", async (values: IUserLoginData, { dispatch }) => {
   try {
@@ -99,8 +68,12 @@ const authSlice = createSlice<
       state.data = {};
       state.status = "";
       window.localStorage.clear();
-      window.location.reload();
     },
+    logIn: (state, action) => {
+      console.log(action);
+      state.data = action.payload;
+      state.status = "loaded"
+    }
   },
   extraReducers: {
     [fetchAuth.pending.type]: (state) => {
@@ -128,4 +101,4 @@ const authSlice = createSlice<
 
 export const authReducer = authSlice.reducer;
 
-export const { logout } = authSlice.actions;
+export const { logout, logIn } = authSlice.actions;

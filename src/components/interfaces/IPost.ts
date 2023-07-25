@@ -20,3 +20,11 @@ export interface UpdatePost {
   id: number;
   updateData: PostInfo;
 }
+
+export interface PostsData {
+  posts: Post[];
+}
+
+export interface PostData {
+  post: Post;
+}

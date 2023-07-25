@@ -12,7 +12,7 @@ import { isAuth, isUserLoaded, selectUser } from "./redux/slices/auth/authSelect
 import { fetchAuthMe } from "./redux/slices/auth/auth";
 
 function App() {
-  const [ successToast, errorToast ] = useToast();
+  const { successToast, errorToast } = useToast();
   const toast = useSelector(selectToastState);
   const isLoaded = useSelector(isAuth);
   // React.useEffect(() => {

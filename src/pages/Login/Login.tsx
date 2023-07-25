@@ -1,6 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 
 import Typography from "@mui/material/Typography";
@@ -8,52 +8,48 @@ import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 
-import {useStyles} from "./styles"
+import { useStyles } from "./styles";
 
-import {IUserLoginData} from "../../components/interfaces/auth/IAuth";
-import {yupResolver} from "@hookform/resolvers/yup";
-import {userLoginSchema} from "./validationSchema";
+import { IUserLoginData } from "../../components/interfaces/auth/IAuth";
 import { isAuth } from "../../redux/slices/auth/authSelectors";
-import { fetchAuth } from "../../redux/slices/auth/auth";
+import { useMutation } from "@apollo/client";
+import { AuthUser } from "../../app/graphql/queries/queries";
+import { useToast } from "../../hooks/toast/useToast";
 import { appDispatch } from "../../redux/store";
+import { logIn } from "../../redux/slices/auth/auth";
 
 export const Login = () => {
-  const styles = useStyles()
-  const isLoaded = useSelector(isAuth);
-
+  const styles = useStyles();
+  const isLoaded = useSelector( isAuth );
+  const { errorToast } = useToast();
+  const [ getAuthUser, { loading, error, data } ] = useMutation( AuthUser );
+  
+  
   const {
     register,
     handleSubmit,
     formState: { errors, isValid },
-  } = useForm({
+  } = useForm( {
     defaultValues: {
       email: "",
       password: "",
     },
     mode: "onChange",
-    resolver: yupResolver(userLoginSchema)
-  });
+    // resolver: yupResolver(userLoginSchema)
+  } );
 
   const onSubmit = async (values: IUserLoginData) => {
-    const data = await appDispatch(fetchAuth(values));
-    if (!data.payload) {
-      // dispatch(
-      //   openModal({
-      //     type: ModalType.Error,
-      //     payload: {
-      //       errors: [{msg: "Перевірте правильність введеної пошти та пароля"}]
-      //     },
-      //     onCancel: () => {
-      //       dispatch(closeModal(ModalType.Error));
-      //     },
-      //   })
-      // );
+    try {
+      const { data } = await getAuthUser( { variables: { user: values } } )
+      window.localStorage.setItem("user", JSON.stringify(data?.login))
+      appDispatch(logIn(data?.login))
     }
-
-
+    catch ( e ) {}
+    
   };
 
   if (isLoaded) {
+    console.log( 55 );
     return <Navigate to="/" />;
   }
 

@@ -6,7 +6,6 @@ import {TextField, Button} from "@mui/material";
 
 import { props, useStyles } from "./styles";
 import { appDispatch } from "../../redux/store";
-import { addComment } from "../../redux/slices/posts/posts";
 
 export const AddComment = () => {
   const styles = useStyles()
@@ -20,7 +19,7 @@ export const AddComment = () => {
         postId: Number(id),
         content: text,
       };
-      await appDispatch(addComment(fields))
+      // await appDispatch(addComment(fields))
       setText("");
       setIsLoading(false);
   };
