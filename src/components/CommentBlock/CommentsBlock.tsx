@@ -1,12 +1,10 @@
 import React from "react";
-import { useSelector } from "react-redux";
 
 import {
   Avatar,
   Box,
   CardContent,
-  CardHeader,
-  CircularProgress,
+  CardHeader, CircularProgress,
   Collapse,
   Container,
   Divider,
@@ -17,50 +15,56 @@ import {
   ListItemText,
   Skeleton,
   Tooltip,
-  Typography
+  Typography,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
-
 import { useStyles } from "./styles";
 import { appDispatch } from "../../redux/store";
 import { closeModal, openModal } from "../../redux/slices/modal";
 import { ModalType } from "../../redux/types/modal";
-// import { removeComment } from "../../redux/slices/posts/posts";
-// import { isPostLoading } from "../../redux/slices/posts/postsSelectors";
-import { avatarUrl, fullName } from "../UserInfo/UserInfo";
+import { avatarUrl } from "../UserInfo/UserInfo";
 import { IAuthData } from "../interfaces/auth/IAuth";
-import { selectUser } from "../../redux/slices/auth/authSelectors";
+import { ApolloQueryResult, useMutation } from "@apollo/client";
+import { DeleteComment } from "../../app/graphql/queries/queries";
+import { PostData } from "../interfaces/IPost";
 
 interface ICommentsBlock {
   items: Comment[] | [];
   children: React.ReactNode;
   isLoading: boolean;
   postOwner: IAuthData;
+  refetch: ( variables?: ( Partial<{ postId: number }> | undefined ) ) => Promise<ApolloQueryResult<PostData>>;
 }
 
-export const CommentsBlock = ({
-  items,
-  postOwner,
-  children,
-  isLoading = true,
-}: ICommentsBlock) => {
+export const CommentsBlock = ( {
+   items,
+   postOwner,
+   children,
+   refetch,
+   isLoading = true,
+ }: ICommentsBlock ) => {
   const styles = useStyles();
-  // const loadingState = useSelector(isPostLoading);
-  const userData = useSelector(selectUser) as IAuthData;
-  const [ open, setOpen ] = React.useState(false);
-
-  const onClickRemove = (id: number) => {
-    appDispatch(openModal({
+  const [ deleteComment ] = useMutation( DeleteComment );
+  const userData = JSON.parse( window.localStorage.getItem( "user" ) as string );
+  const [ open, setOpen ] = React.useState( false );
+  
+  const onClickRemove = ( id: number ) => {
+    appDispatch( openModal( {
       type: ModalType.RemoveComment,
       onCancel: () => {
-        appDispatch(closeModal(ModalType.RemoveComment));
+        appDispatch( closeModal( ModalType.RemoveComment ) );
       },
       onSubmit: () => {
-        // appDispatch(removeComment(id));
-        appDispatch(closeModal(ModalType.RemoveComment));
+        deleteComment( {
+          variables: {
+            id,
+          },
+        } );
+        refetch();
+        appDispatch( closeModal( ModalType.RemoveComment ) );
       },
     }))
   };
@@ -72,11 +76,11 @@ export const CommentsBlock = ({
           <>
             <Typography component="span">Коментарі</Typography>&nbsp;
             <Typography component="span">
-              {/*{ loadingState ? (*/}
-              {/*  <CircularProgress style={ { width: 20, height: 20 } }/>*/}
-              {/*) : (*/}
-              {/*  items?.length*/}
-              {/*) }*/}
+              { isLoading ? (
+                <CircularProgress style={ { width: 20, height: 20 } }/>
+              ) : (
+                items?.length
+              ) }
             </Typography>
           </>
         }
@@ -100,8 +104,8 @@ export const CommentsBlock = ({
           <CardContent>
             <Container>
               <List>
-                { (isLoading ? [ ...Array(5) ] : items)?.map((obj: any, index: number) => {
-
+                { ( isLoading ? [ ...Array( 5 ) ] : items )?.map( ( comment: any, index: number ) => {
+                    
                     return (
                       <React.Fragment key={ index }>
                         <ListItem alignItems="flex-start">
@@ -115,7 +119,7 @@ export const CommentsBlock = ({
                                     :)
                                   </Avatar>
                                 </Tooltip>
-
+                              
                               </Box>
                             ) }
                           </ListItemAvatar>
@@ -132,26 +136,26 @@ export const CommentsBlock = ({
                               } }
                             >
                               <ListItemText
-                                primary={ obj?.author?.name }
-                                secondary={ obj.content }
+                                primary={ comment?.author?.name }
+                                secondary={ comment.content }
                               />
-                              { (( userData && userData?.id) === obj.author?.id ||
-                              ( userData && userData?.id) === postOwner?.id) && (<Tooltip title="Видалити коментар">
+                              { userData && ( userData.id === comment.author?.id ||
+                                userData.id === postOwner?.id ) && ( <Tooltip title="Видалити коментар">
                                 <IconButton
                                   aria-label="close"
-                                  onClick={ () => onClickRemove(obj.id) }
+                                  onClick={ () => onClickRemove( comment.id ) }
                                   className={ styles.iconButton }
                                 >
                                   <DeleteIcon className={ styles.closeIcon }/>
                                 </IconButton>
-                              </Tooltip>) }
+                              </Tooltip> ) }
                             </Box>
                           ) }
                         </ListItem>
                         <Divider variant="inset" component="li"/>
                       </React.Fragment>
-                    )
-                  }
+                    );
+                  },
                 ) }
               </List>
             </Container>

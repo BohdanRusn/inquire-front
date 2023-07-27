@@ -7,11 +7,19 @@ export interface IAuthData {
   lastLoginAt: string;
 }
 export interface IAuthResponse extends IAuthData {
-  token: string;
+  token?: string;
 }
 
 export interface LoginResponse {
   login: { user: IAuthResponse };
+}
+
+export interface FetchAuthUser {
+  getCurUser: IAuthData ;
+}
+
+export interface RegisterResponse {
+  register: { user: IAuthResponse };
 }
 
 export interface AuthStateProps {

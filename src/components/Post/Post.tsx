@@ -51,7 +51,7 @@ export const Post = ({
         appDispatch(closeModal(ModalType.RemovePost));
       },
       onSubmit: () => {
-        // appDispatch(removePost(id));
+        // appDispa tch(removePost(id));
         appDispatch(closeModal(ModalType.RemovePost));
       },
     }))

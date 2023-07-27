@@ -13,16 +13,18 @@ import { useStyles } from "./styles";
 import { IUserLoginData } from "../../components/interfaces/auth/IAuth";
 import { isAuth } from "../../redux/slices/auth/authSelectors";
 import { useMutation } from "@apollo/client";
-import { AuthUser } from "../../app/graphql/queries/queries";
 import { useToast } from "../../hooks/toast/useToast";
 import { appDispatch } from "../../redux/store";
 import { logIn } from "../../redux/slices/auth/auth";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { userLoginSchema } from "./validationSchema";
+import { LoginUser } from "../../app/graphql/queries/queries";
 
 export const Login = () => {
   const styles = useStyles();
   const isLoaded = useSelector( isAuth );
   const { errorToast } = useToast();
-  const [ getAuthUser, { loading, error, data } ] = useMutation( AuthUser );
+  const [ getAuthUser, { loading, error, data } ] = useMutation( LoginUser );
   
   
   const {
@@ -35,7 +37,7 @@ export const Login = () => {
       password: "",
     },
     mode: "onChange",
-    // resolver: yupResolver(userLoginSchema)
+    resolver: yupResolver( userLoginSchema ),
   } );
 
   const onSubmit = async (values: IUserLoginData) => {
@@ -49,7 +51,6 @@ export const Login = () => {
   };
 
   if (isLoaded) {
-    console.log( 55 );
     return <Navigate to="/" />;
   }
 

@@ -38,9 +38,9 @@ export const AddPost = () => {
       ? await updatePost( { variables: { post: { id: Number(id), newPost: fields } } }  )
       : await addNewPost( { variables: { newPost: fields } }  );
     console.log( data );
-    // const _id = data.payload.id;
+    const _id = data.data.addPost.id || data.data.updatePost.id;
     //
-    // navigate(`/posts/${_id}`);
+    navigate(`/posts/${_id}`);
   };
 
   React.useEffect(() => {

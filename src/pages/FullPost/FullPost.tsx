@@ -7,15 +7,13 @@ import { Post } from "../../components/Post/Post";
 import { CommentsBlock } from "../../components/CommentBlock/CommentsBlock";
 import { AddComment } from "../../components/AddComment/AddComment";
 import { IAuthData } from "../../components/interfaces/auth/IAuth";
-import { selectUser } from "../../redux/slices/auth/authSelectors";
 import { useQuery } from "@apollo/client";
 import { GetPostById } from "../../app/graphql/queries/queries";
 
 export const FullPost = () => {
-  const user = useSelector( selectUser );
   const { id } = useParams();
-  const { loading, data } = useQuery( GetPostById, { variables: { postId: Number( id ) } } );
-  
+  const user = JSON.parse(window.localStorage.getItem("user") as string)
+  const { loading, data, refetch } = useQuery( GetPostById, { variables: { postId: Number( id ) },  } );
   
   if ( loading ) {
     return <PostSkeleton/>;
@@ -39,8 +37,9 @@ export const FullPost = () => {
                   postOwner={ data?.post.author }
                   items={ data?.post.comments as Comment[] }
                   isLoading={ loading }
+                  refetch={refetch}
               >
-                { user && <AddComment/> }
+                { user && <AddComment refetch={refetch}/> }
               </CommentsBlock>
             </>
       }

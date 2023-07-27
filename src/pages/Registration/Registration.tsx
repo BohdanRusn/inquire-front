@@ -1,6 +1,5 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
@@ -11,18 +10,16 @@ import { userRegisterSchema } from "./validationSchema";
 import { IUserRegisterData } from "../../components/interfaces/auth/IAuth";
 
 import { useStyles } from "./styles";
-import { isAuth as selectIsAuth } from "../../redux/slices/auth/authSelectors";
-import { appDispatch } from "../../redux/store";
-import { fetchRegister } from "../../redux/slices/auth/auth";
 import { useToast } from "../../hooks/toast/useToast";
+import { useMutation } from "@apollo/client";
+import { RegisterUser } from "../../app/graphql/queries/queries";
 
 export const Registration = () => {
   const styles = useStyles();
-  const isAuth = useSelector(selectIsAuth);
-  const { successToast, errorToast }  = useToast();
-  const user = JSON.parse(window.localStorage.getItem("user") as string);
+  const { successToast } = useToast();
+  const [ registerUser ] = useMutation( RegisterUser );
   const navigate = useNavigate();
-
+  
   const {
     register,
     handleSubmit,
@@ -39,13 +36,12 @@ export const Registration = () => {
 
 
   const onSubmit = async (values: IUserRegisterData) => {
-    const data = await appDispatch(fetchRegister(values));
-    if (data.meta.requestStatus === "fulfilled") {
+    try {
+      const { data } = await registerUser( { variables: { user: values } } );
+      console.log( data );
       successToast("Реєстрація прошла успішно")
       navigate("/login")
-    } else {
-      errorToast("Невідома помилка, спробуйте пізніше")
-    }
+    } catch ( e ) {}
   };
 
   return (

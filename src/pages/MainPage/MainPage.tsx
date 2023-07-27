@@ -8,15 +8,18 @@ import { useQuery } from "@apollo/client";
 import { GetPostsDocument } from "../../app/graphql/queries/queries";
 
 export const MainPage = () => {
-  const { loading, error, data } = useQuery(GetPostsDocument);
-  const user = JSON.parse(window.localStorage.getItem("user") as string);
+  const { loading, error, data } = useQuery( GetPostsDocument, {
+    fetchPolicy: 'network-only', // Force a network request on each render
+  } );
+  const user = JSON.parse( window.localStorage.getItem( "user" ) as string );
+  
   
   return (
     <div>
-      { loading ? [ ...Array(3) ].map((post, index) => <PostSkeleton key={ index }/>)
+      { loading ? [ ...Array( 3 ) ].map( ( post, index ) => <PostSkeleton key={ index }/> )
         : data?.posts.length === 0 ? (
           <NoPost img={ blog } description="Поки що немає жодного допису"/>
-        ) : data?.posts.map((post) => {
+        ) : data?.posts.map( ( post ) => {
           return (
             <Post
               key={ post.id }

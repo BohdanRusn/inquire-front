@@ -67,6 +67,7 @@ const authSlice = createSlice<
     logout: (state) => {
       state.data = {};
       state.status = "";
+      console.log(5555);
       window.localStorage.clear();
     },
     logIn: (state, action) => {

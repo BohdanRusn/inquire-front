@@ -15,7 +15,7 @@ import { isAuth, selectUser } from "../../redux/slices/auth/authSelectors";
 
 export const Header = () => {
   const styles = useStyles();
-  const user = useSelector(isAuth);
+  const user = JSON.parse(window.localStorage.getItem("user") as string)
   const navigate = useNavigate();
 
   const logoutProfile = () => {

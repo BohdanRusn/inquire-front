@@ -2,26 +2,30 @@ import React from "react";
 import { useParams } from "react-router-dom";
 
 
-import {TextField, Button} from "@mui/material";
+import { Button, TextField } from "@mui/material";
 
 import { props, useStyles } from "./styles";
-import { appDispatch } from "../../redux/store";
+import { ApolloQueryResult, useLazyQuery, useMutation } from "@apollo/client";
+import { AddNewComment } from "../../app/graphql/queries/queries";
+import { PostData } from "../interfaces/IPost";
 
-export const AddComment = () => {
-  const styles = useStyles()
-  const [text, setText] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(false);
+export const AddComment = ({refetch}: {refetch: (variables?: (Partial<{postId: number}> | undefined)) => Promise<ApolloQueryResult<PostData>>}) => {
+  const styles = useStyles();
+  const [ addCommentRequest, { loading, data } ] = useMutation( AddNewComment );
+  const [ text, setText ] = React.useState( "" );
+  const [ isLoading, setIsLoading ] = React.useState( false );
   const { id } = useParams();
-
+  
   const onSubmit = async () => {
-      setIsLoading(true);
+    setIsLoading( true );
       const fields = {
         postId: Number(id),
         content: text,
       };
-      // await appDispatch(addComment(fields))
-      setText("");
-      setIsLoading(false);
+    await addCommentRequest( { variables: { newComment: fields } } );
+    setText( "" );
+    refetch();
+    setIsLoading(false);
   };
 
   return (

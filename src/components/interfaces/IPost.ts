@@ -16,6 +16,11 @@ export interface Comment {
   author: IAuthData;
 }
 
+export interface NewComment {
+  postId: number;
+  content: string;
+}
+
 export interface UpdatePost {
   id: number;
   updateData: PostInfo;
@@ -27,4 +32,8 @@ export interface PostsData {
 
 export interface PostData {
   post: Post;
+}
+
+export interface PostData {
+  addComment: Post;
 }
